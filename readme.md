@@ -36,6 +36,19 @@ change fields displayed on the panel
 python manage.py makemigrations
 python manage.py migrate
 
-admin.py更新
+admin.py 更新
 
-admin.py更新 userとprofileをまとめて処理
+admin.py 更新 user と profile をまとめて処理
+
+secret key exposed
+settings.py
+
+- environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+- SECRET_KEY = env('SECRET_KEY')
+- DEBUG = env('DEBUG')
+
+.env
+SECRET_KEY=XXXXXXXXXXXXXXXXXXXXXXX
+DEBUG=True
+
+include .env in .gitignore
