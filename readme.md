@@ -52,3 +52,4 @@ SECRET_KEY=XXXXXXXXXXXXXXXXXXXXXXX
 DEBUG=True
 
 include .env in .gitignore
+python -m pip install django-environ
