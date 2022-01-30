@@ -19,7 +19,8 @@ from django.urls import include, path
 
 
 urlpatterns = [
-    path('', include('chokin.urls')),
+    # path('', include('chokin.urls')),
     path('chokin/', include('chokin.urls')),
     path('admin/', admin.site.urls),
+    path('', include('chokin.urls')),
 ]

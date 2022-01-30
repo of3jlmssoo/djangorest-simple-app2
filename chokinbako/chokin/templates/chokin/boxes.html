@@ -1,0 +1,42 @@
+<label for="exampleFormControlInput1" class="form-label"><p class="text-muted mt-5 mb-0">貯金箱を選んでください</p></label>
+<div class="container">
+  <form action="{% url 'chokin' %}" method="POST">
+    {% csrf_token %}
+    <div class="row mb-4">
+      <div class="col-12 col-xl-4 mb-2">
+        <div class="form-group">
+          <input class="{{box1}}" type="submit" name="boxchoice1" id="box1" value="貯金箱1"></input>
+          {% if boxpanel == 0 %}
+            <p class="text-center mb-0">{{ box1current }}</p>
+          {% else %}
+            <p class="text-center mb-0">{{ box1current }}</p>
+            <p class="text-center mt-0">手続き前 : {{ box1previous }}</p>
+          {% endif %}
+        </div>
+        
+      </div>
+      <div class="col-12 col-xl-4 mb-2">
+        <div class="form-group">
+          <input class="{{box2}}" type="submit" name="boxchoice2" id="box2" value="貯金箱2"></input>
+          {% if boxpanel == 0 %}
+            <p class="text-center mb-0">{{ box2current }}</p>
+          {% else %}
+            <p class="text-center mb-0">{{ box2current }}</p>
+            <p class="text-center mt-0">手続き前 : {{ box2previous }}</p>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-12 col-xl-4 mb-2">
+        <div class="form-group">
+          <input class="{{box3}}" type="submit" name="boxchoice3" id="box3" value="貯金箱3"></input>
+          {% if boxpanel == 0 %}
+            <p class="text-center mb-0">{{ box3current }}</p>
+          {% else %}
+            <p class="text-center mb-0">{{ box3current }}</p>
+            <p class="text-center mt-0">手続き前 : {{ box3previous }}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

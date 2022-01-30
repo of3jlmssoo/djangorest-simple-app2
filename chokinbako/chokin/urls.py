@@ -1,7 +1,9 @@
-from django.urls import path
+from django.urls import path, include
+from django.contrib import admin
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('some_view', views.some_view, name='some_view'),
+    path('', views.chokin, name='chokin'),
+    # path('confirm/<price>/<box>/<proc>/', views.confirm, name='confirm')
+    path('confirm', views.confirm, name='confirm')
 ]
