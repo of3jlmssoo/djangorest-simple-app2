@@ -40,6 +40,7 @@ def chokin(request):
     #     'box3': NORMAL_CLASS,
     # }
 
+
     if 'boxchoice1' in request.POST:
         choice_context['box1'] = HIGHLIGHT_CLASS
         choice_context['box2'] = NORMAL_CLASS
@@ -110,5 +111,14 @@ def confirm(request):
     # return HttpResponse(template.render(choice_context, request))
 
     # return HttpResponse("Hello, World!")
-
+    choice_context['subpanel'] = 1
     return render(request, 'chokin/confirm.html', choice_context)
+
+def returnchokin(request):
+
+    print(f'--> return2chokin called {request.POST=}')
+    if 'cancel' in request.POST:
+        clear_choices()
+        choice_context['boxpanel'] = 0
+        choice_context['subpanel'] = 0
+        return render(request, 'chokin/chokin.html', choice_context)    

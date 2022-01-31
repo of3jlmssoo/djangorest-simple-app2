@@ -9,27 +9,76 @@
 {{ proc }}
 
 <div class="container">
-<div class="row row-cols-1 row-cols-md-1 mb-3 text-center">
-      <div class="col-3">
-      </div>
-      <div class="col-3">
-        <div class="card mb-4 rounded-3 shadow-sm"  style="width: 24rem;">
-          <div class="card-header py-3">
-            <h4 class="my-0 fw-normal">{% if proc ==　'proc1' %}貯める{% else %}使う{% endif %}</h4>
+    <div class="row row-cols-1 row-cols-md-1 mb-3 text-center">
+          <div class="col-12 col-xl-4 mb-2">
+            {% if box == 'box1' %}
+              <div class="card mb-4 rounded-3 shadow-sm"  style="width: 24rem;">
+                <div class="card-header py-3">
+                  <h4 class="my-0 fw-normal">{% if proc == 'proc1' %}貯める{% else %}使う{% endif %}</h4>
+                </div>
+                <div class="card-body">
+                  <h1 class="card-title text-muted fw-light">{{ price }},000円<small class="text-muted fw-light"></small></h1>
+                  <ul class="list-unstyled mt-3 mb-4">
+                    <li>10 users included</li>
+                    <li>2 GB of storage</li>
+                    <li>Email support</li>
+                    <li>Help center access</li>
+                  </ul>
+                  <form action="{% url 'returnchokin' %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="w-100 btn btn-lg btn-outline-primary mb-1" name="fix" id="confirm5" value="確定"></input>
+                    <input type="submit" class="w-100 btn btn-lg btn-outline-primary" name="cancel" id="confirm6" value="取消"></input>
+                  </form>
+                </div>
+              </div>
+            {% endif %}
           </div>
-          <div class="card-body">
-            <h1 class="card-title text-muted fw-light">{{ price }},000円<small class="text-muted fw-light"></small></h1>
-            <ul class="list-unstyled mt-3 mb-4">
-              <li>10 users included</li>
-              <li>2 GB of storage</li>
-              <li>Email support</li>
-              <li>Help center access</li>
-            </ul>
-            <button type="button" class="w-100 btn btn-lg btn-outline-primary mb-1">確定</button>
-            <button type="button" class="w-100 btn btn-lg btn-outline-primary">取消</button>
+          <div class="col-12 col-xl-4 mb-2">
+            {% if box == 'box2' %}
+              <div class="card mb-4 rounded-3 shadow-sm"  style="width: 24rem;">
+                <div class="card-header py-3">
+                  <h4 class="my-0 fw-normal">{% if proc == 'proc1' %}貯める{% else %}使う{% endif %}</h4>
+                </div>
+                <div class="card-body">
+                  <h1 class="card-title text-muted fw-light">{{ price }},000円<small class="text-muted fw-light"></small></h1>
+                  <ul class="list-unstyled mt-3 mb-4">
+                    <li>10 users included</li>
+                    <li>2 GB of storage</li>
+                    <li>Email support</li>
+                    <li>Help center access</li>
+                  </ul>
+                  <form action="{% url 'returnchokin' %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="w-100 btn btn-lg btn-outline-primary mb-1" name="fix" id="confirm5" value="確定"></input>
+                    <input type="submit" class="w-100 btn btn-lg btn-outline-primary" name="cancel" id="confirm6" value="取消"></input>
+                  </form>
+                </div>
+              </div>
+            {% endif %}
+          </div>      
+          <div class="col-12 col-xl-4 mb-2">
+            {% if box == 'box3' %}
+              <div class="card mb-4 rounded-3 shadow-sm"  style="width: 24rem;">
+                <div class="card-header py-3">
+                  <h4 class="my-0 fw-normal">{% if proc == 'proc1' %}貯める{% else %}使う{% endif %}</h4>
+                </div>
+                <div class="card-body">
+                  <h1 class="card-title text-muted fw-light">{{ price }},000円<small class="text-muted fw-light"></small></h1>
+                  <ul class="list-unstyled mt-3 mb-4">
+                    <li>10 users included</li>
+                    <li>2 GB of storage</li>
+                    <li>Email support</li>
+                    <li>Help center access</li>
+                  </ul>
+                  <form action="{% url 'returnchokin' %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="w-100 btn btn-lg btn-outline-primary mb-1" name="fix" id="confirm5" value="確定"></input>
+                    <input type="submit" class="w-100 btn btn-lg btn-outline-primary" name="cancel" id="confirm6" value="取消"></input>
+                  </form>
+                </div>
+              </div>
+            {% endif %}
           </div>
-        </div>
-      </div>
-</div>
+    </div>
 </div>
 {% endblock  %}

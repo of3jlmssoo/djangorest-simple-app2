@@ -1,4 +1,4 @@
-<label for="exampleFormControlInput1" class="form-label"><p class="text-muted mt-5 mb-0">貯金箱を選んでください</p></label>
+<label for="exampleFormControlInput1" class="form-label"><p class="text-muted mt-5 mb-0"> {% if subpanel == 0 %} 貯金箱を選んでください{% endif %}</p></label>
 <div class="container">
   <form action="{% url 'chokin' %}" method="POST">
     {% csrf_token %}
