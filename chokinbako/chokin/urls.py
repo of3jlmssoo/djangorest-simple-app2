@@ -9,4 +9,5 @@ urlpatterns = [
     path('returnchokin', views.returnchokin, name='returnchokin'),
     path('select_box/<int:id>', views.select_box, name='select_box'),
     path('select_proc/<int:id>', views.select_proc, name='select_proc'),
+    path('proc_bill/<str:target>/<str:proc>', views.proc_bill, name='proc_bill'),
 ]

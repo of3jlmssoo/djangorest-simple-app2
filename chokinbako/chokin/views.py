@@ -21,9 +21,9 @@ choice_context = {
     'box3previous': 789,
     'boxpanel': 0,
     'subpanel': 0,
-    'price1': 0,
-    'price2': 0,
-    'price': 1,
+    'thousands': 0,
+    'millions': 0,
+    'price': 0,
     'box': 0,
     'proc': 0
 }
@@ -33,7 +33,21 @@ def index(request):
     # return HttpResponse("Hello, world. You're at the polls index.")
     return render(request, 'chokin/base.html', choice_context)
 
+def proc_bill(request, target, proc):
+    if target == 'thousands' and proc == '+' and choice_context['thousands'] < 9:
+        choice_context['thousands'] += 1
+    if target == 'millions'  and proc == '+' and choice_context['millions'] < 20:
+        choice_context['millions'] += 1
 
+    if target == 'thousands' and proc == '-' and choice_context['thousands'] > 0:
+        choice_context['thousands'] -= 1
+    if target == 'millions'  and proc == '-' and choice_context['millions'] > 0:
+        choice_context['millions'] -= 1
+
+
+    choice_context['price'] = choice_context['millions'] *10 + choice_context['thousands']
+    return redirect('chokin')
+        
 
 def select_box(request,id):
     print(f'chokin views.py select_box: called')
@@ -71,24 +85,24 @@ def chokin(request):
     #     'box3': NORMAL_CLASS,
     # }
 
-    if 'boxchoice1' in request.POST:
-        choice_context['box1'] = HIGHLIGHT_CLASS
-        choice_context['box2'] = NORMAL_CLASS
-        choice_context['box3'] = NORMAL_CLASS
-    if 'boxchoice2' in request.POST:
-        choice_context['box1'] = NORMAL_CLASS
-        choice_context['box2'] = HIGHLIGHT_CLASS
-        choice_context['box3'] = NORMAL_CLASS
-    if 'boxchoice3' in request.POST:
-        choice_context['box1'] = NORMAL_CLASS
-        choice_context['box2'] = NORMAL_CLASS
-        choice_context['box3'] = HIGHLIGHT_CLASS
-    if 'boxchoice4' in request.POST:
-        choice_context['proc1'] = HIGHLIGHT_CLASS
-        choice_context['proc2'] = NORMAL_CLASS
-    if 'boxchoice5' in request.POST:
-        choice_context['proc1'] = NORMAL_CLASS
-        choice_context['proc2'] = HIGHLIGHT_CLASS
+    # if 'boxchoice1' in request.POST:
+    #     choice_context['box1'] = HIGHLIGHT_CLASS
+    #     choice_context['box2'] = NORMAL_CLASS
+    #     choice_context['box3'] = NORMAL_CLASS
+    # if 'boxchoice2' in request.POST:
+    #     choice_context['box1'] = NORMAL_CLASS
+    #     choice_context['box2'] = HIGHLIGHT_CLASS
+    #     choice_context['box3'] = NORMAL_CLASS
+    # if 'boxchoice3' in request.POST:
+    #     choice_context['box1'] = NORMAL_CLASS
+    #     choice_context['box2'] = NORMAL_CLASS
+    #     choice_context['box3'] = HIGHLIGHT_CLASS
+    # if 'boxchoice4' in request.POST:
+    #     choice_context['proc1'] = HIGHLIGHT_CLASS
+    #     choice_context['proc2'] = NORMAL_CLASS
+    # if 'boxchoice5' in request.POST:
+    #     choice_context['proc1'] = NORMAL_CLASS
+    #     choice_context['proc2'] = HIGHLIGHT_CLASS
     if 'price1' in request.POST:
         print(f'=> chokin()() called {request.POST.get("price1")=} {which_box_and_process()=}')
         # return redirect('result')

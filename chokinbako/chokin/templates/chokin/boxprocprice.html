@@ -1,4 +1,5 @@
 {% load static %}
+{% load mathfilters %}
 <div class="container">
 
     <label for="exampleFormControlInput1" class="form-label mt-5"><p class="text-muted mt-5 mb-0">どうしますか？</p></label>
@@ -20,50 +21,30 @@
 
   </div>
 
-  <form action="{% url 'chokin' %}" method="POST">
-  {% csrf_token %}
-  <div class="container align-items-center mt-5">
-
-      <div class="row mx-auto mt-5 align-items-center">
-        <div class="col col-0 col-xl-3"></div>
-        <div class="col col-12 col-xl-3">
-          <p class="text-muted my-0">1万円から20万円まで1万円単位です。</p>
-        </div>
-        <div class="col  col-12 col-xl-2">
-          <span class="fs-4">
-          <div><output id="num">1</output>0,000円</span></div>
-          <input type="range" value="1" min="1" max="20" step="1" oninput="num.value = this.value" name="price1">
-        </div>
-        <div class="col col-12 col-xl-2">
-          <!-- <button type="button" class="btn btn-outline-success">確定</button> -->
-          <input  type="submit" class="btn btn-outline-success" name="price" id="price2" value="確定"></input>
-        </div>
-      </div>
-            
-  </div>
-  </form>
-
-    <div class="row mb-3">
-    <div class="col-md-6 themed-grid-col">
-        <div class="pb-3">
-          <a href="{% url 'chokin' %}" class="btn btn-light fs-4 align-middle  mb-0" type="button" id="button-plus" > <i class="fa fa-plus"></i>    </a>
-          <p class="fs-4 align-middle  mb-0" style="display:inline">&ensp;{{ price }},000円</p>
-          <a href="{% url 'chokin' %}" class="btn btn-light fs-4 align-middle  mb-0" type="button" id="button-minus" > <i class="fa fa-minus"></i> </a>
-
-
+    <label for="exampleFormControlInput1" class="form-label mt-5"><p class="text-muted mt-5 mb-0">お札の枚数を指定して金額を決めてください。最後は確定ボタンを押してください</p></label>
+    <div class="row m-3">
+    <div class="col-3 themed-grid-col">
+        <div class="p-0">
+          <p class="mb-0">お札の枚数指定</p>
+          <p class="fs-6" style="display:inline">&ensp;(1,000円)</p>
+          <a href="{% url 'proc_bill' 'thousands' '+' %}" class="btn btn-light fs-4 align-middle  m-0" type="button" id="button-plus" > <i class="fa fa-plus"></i></a>
+          <p class="fs-4 align-middle  m-0" style="display:inline">&ensp;{{thousands}},000円</p>
+          <a href="{% url 'proc_bill' 'thousands' '-' %}" class="btn btn-light fs-4 align-middle  m-0" type="button" id="button-minus" > <i class="fa fa-minus"></i> </a>
         </div>
       <div class="row">
-        <div class="pb-3">
-          <a href="{% url 'chokin' %}" class="btn btn-light fs-4 align-middle  mb-0" type="button" id="button-plus" > <i class="fa fa-plus"></i>    </a>
-          <p class="fs-4 align-middle  mb-0" style="display:inline">{{ price }}0,000円</p>
-          <a href="{% url 'chokin' %}" class="btn btn-light fs-4 align-middle  mb-0" type="button" id="button-minus" > <i class="fa fa-minus"></i> </a>
-
+        <div class="pb-0">
+          <p class="fs-6" style="display:inline">(10,000円)</p>
+          <a href="{% url 'proc_bill' 'millions'  '+' %}" class="btn btn-light fs-4 align-middle  mb-0" type="button" id="button-plus" > <i class="fa fa-plus"></i></a>
+          <div class="fs-4 align-middle  m-0" style="display:inline">{% if millions == 0%}&ensp;{%endif%}{{millions|mul:10}},000円</div>
+          <a href="{% url 'proc_bill' 'millions' '-' %}" class="btn btn-light fs-4 align-middle  mb-0" type="button" id="button-minus" > <i class="fa fa-minus"></i> </a>
         </div>
         
       </div>
     </div>
-    <div class="col-md-6 themed-grid-col">
-          <p class="fs-4 align-middle  mb-0" style="display:inline">{{ price }},000円</p>
+    <div class="col-3 themed-grid-col align-self-center">
+          <p class="mb-0">金額</p>
+          <p class="fs-4  mb-0">{{ price }},000円</p>
+          <a class="btn btn-primary btn-sm" href="#" role="button">確定</a>
     </div>
   </div>
 
