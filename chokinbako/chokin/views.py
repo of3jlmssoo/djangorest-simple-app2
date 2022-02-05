@@ -4,8 +4,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
 
-HIGHLIGHT_CLASS = "btn btn-success w-100 btn-lg rounded-pill p-4"
-NORMAL_CLASS = "btn btn-secondary w-100 btn-lg rounded-pill p-4"
+HIGHLIGHT_CLASS = "btn btn-success   w-100 btn-lg rounded-pill p-4"
+NORMAL_CLASS    = "btn btn-secondary w-100 btn-lg rounded-pill p-4"
 
 choice_context = {
     'box1': NORMAL_CLASS,
@@ -21,7 +21,9 @@ choice_context = {
     'box3previous': 789,
     'boxpanel': 0,
     'subpanel': 0,
-    'price': 0,
+    'price1': 0,
+    'price2': 0,
+    'price': 1,
     'box': 0,
     'proc': 0
 }
@@ -32,6 +34,35 @@ def index(request):
     return render(request, 'chokin/base.html', choice_context)
 
 
+
+def select_box(request,id):
+    print(f'chokin views.py select_box: called')
+    choice_context['box1'] = NORMAL_CLASS
+    choice_context['box2'] = NORMAL_CLASS
+    choice_context['box3'] = NORMAL_CLASS
+
+    if id <1 or id > 3:
+        print(f'chokin views.py select_box: invalid box choice {id=}')
+
+    if id == 1: choice_context['box1'] = HIGHLIGHT_CLASS
+    if id == 2: choice_context['box2'] = HIGHLIGHT_CLASS
+    if id == 3: choice_context['box3'] = HIGHLIGHT_CLASS
+
+    return redirect('chokin')
+
+def select_proc(request,id):
+    print(f'chokin views.py select_proc: called')
+    choice_context['proc1'] = NORMAL_CLASS
+    choice_context['proc2'] = NORMAL_CLASS
+
+    if id <1 or id > 2:
+        print(f'chokin views.py select_box: invalid box choice {id=}')
+
+    if id == 1: choice_context['proc1'] = HIGHLIGHT_CLASS
+    if id == 2: choice_context['proc2'] = HIGHLIGHT_CLASS
+
+    return redirect('chokin')
+
 def chokin(request):
     print(f'=> chokin()() called {request.POST.keys()}')
     # context = {
@@ -39,7 +70,6 @@ def chokin(request):
     #     'box2': NORMAL_CLASS,
     #     'box3': NORMAL_CLASS,
     # }
-
 
     if 'boxchoice1' in request.POST:
         choice_context['box1'] = HIGHLIGHT_CLASS
@@ -114,6 +144,7 @@ def confirm(request):
     choice_context['subpanel'] = 1
     return render(request, 'chokin/confirm.html', choice_context)
 
+
 def returnchokin(request):
 
     print(f'--> return2chokin called {request.POST=}')
@@ -121,4 +152,4 @@ def returnchokin(request):
         clear_choices()
         choice_context['boxpanel'] = 0
         choice_context['subpanel'] = 0
-        return render(request, 'chokin/chokin.html', choice_context)    
+        return render(request, 'chokin/chokin.html', choice_context)

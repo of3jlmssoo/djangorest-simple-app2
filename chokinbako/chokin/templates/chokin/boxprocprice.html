@@ -7,12 +7,12 @@
       <div class="row mb-5">
         <div class="col-6 js-matchHeigtht">
           <div class="form-group">
-          <input class="{{proc1}}" type="submit" name="boxchoice4" id="box4" value="貯める"></input>
+          <a type="button" href="{% url 'select_proc' 1 %}"  class="{{proc1}}" type="submit" name="boxchoice4" id="box4" value="貯める">貯める</a>
           </div>
         </div>
         <div class="col-6 col-md-offset-3 js-matchHeigtht">
           <div class="form-group">
-          <input class="{{proc2}}" type="submit" name="boxchoice5" id="box5" value="使う"></input>
+          <a type="button" href="{% url 'select_proc' 2 %}"  class="{{proc2}}" type="submit" name="boxchoice5" id="box5" value="使う">使う</a>
           </div>
         </div>
       </div>
@@ -39,6 +39,32 @@
           <input  type="submit" class="btn btn-outline-success" name="price" id="price2" value="確定"></input>
         </div>
       </div>
-      
+            
   </div>
   </form>
+
+    <div class="row mb-3">
+    <div class="col-md-6 themed-grid-col">
+        <div class="pb-3">
+          <a href="{% url 'chokin' %}" class="btn btn-light fs-4 align-middle  mb-0" type="button" id="button-plus" > <i class="fa fa-plus"></i>    </a>
+          <p class="fs-4 align-middle  mb-0" style="display:inline">&ensp;{{ price }},000円</p>
+          <a href="{% url 'chokin' %}" class="btn btn-light fs-4 align-middle  mb-0" type="button" id="button-minus" > <i class="fa fa-minus"></i> </a>
+
+
+        </div>
+      <div class="row">
+        <div class="pb-3">
+          <a href="{% url 'chokin' %}" class="btn btn-light fs-4 align-middle  mb-0" type="button" id="button-plus" > <i class="fa fa-plus"></i>    </a>
+          <p class="fs-4 align-middle  mb-0" style="display:inline">{{ price }}0,000円</p>
+          <a href="{% url 'chokin' %}" class="btn btn-light fs-4 align-middle  mb-0" type="button" id="button-minus" > <i class="fa fa-minus"></i> </a>
+
+        </div>
+        
+      </div>
+    </div>
+    <div class="col-md-6 themed-grid-col">
+          <p class="fs-4 align-middle  mb-0" style="display:inline">{{ price }},000円</p>
+    </div>
+  </div>
+
+</div>
