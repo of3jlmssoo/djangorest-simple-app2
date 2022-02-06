@@ -3,9 +3,10 @@ from django.shortcuts import render, redirect
 # Create your views here.
 from django.http import HttpResponse
 from django.template import loader
+from django.contrib import messages
 
 HIGHLIGHT_CLASS = "btn btn-success   w-100 btn-lg rounded-pill p-4"
-NORMAL_CLASS    = "btn btn-secondary w-100 btn-lg rounded-pill p-4"
+NORMAL_CLASS = "btn btn-secondary w-100 btn-lg rounded-pill p-4"
 
 choice_context = {
     'box1': NORMAL_CLASS,
@@ -13,12 +14,15 @@ choice_context = {
     'box3': NORMAL_CLASS,
     'proc1': NORMAL_CLASS,
     'proc2': NORMAL_CLASS,
-    'box1current': 321,
-    'box2current': 654,
-    'box3current': 987,
-    'box1previous': 123,
-    'box2previous': 456,
-    'box3previous': 789,
+    'box1display': 200000,  # formatted string with thousand separator
+    'box2display': 100000,  # formatted string with thousand separator
+    'box3display': 50000,   # formatted string with thousand separator
+    'box1current': 200000,  # int
+    'box2current': 100000,  # int
+    'box3current': 50000,   # int
+    'box1previous': 123,    # int
+    'box2previous': 456,    # int
+    'box3previous': 789,    # int
     'boxpanel': 0,
     'subpanel': 0,
     'thousands': 0,
@@ -33,29 +37,29 @@ def index(request):
     # return HttpResponse("Hello, world. You're at the polls index.")
     return render(request, 'chokin/base.html', choice_context)
 
+
 def proc_bill(request, target, proc):
     if target == 'thousands' and proc == '+' and choice_context['thousands'] < 9:
         choice_context['thousands'] += 1
-    if target == 'millions'  and proc == '+' and choice_context['millions'] < 20:
+    if target == 'millions' and proc == '+' and choice_context['millions'] < 20:
         choice_context['millions'] += 1
 
     if target == 'thousands' and proc == '-' and choice_context['thousands'] > 0:
         choice_context['thousands'] -= 1
-    if target == 'millions'  and proc == '-' and choice_context['millions'] > 0:
+    if target == 'millions' and proc == '-' and choice_context['millions'] > 0:
         choice_context['millions'] -= 1
 
-
-    choice_context['price'] = choice_context['millions'] *10 + choice_context['thousands']
+    choice_context['price'] = choice_context['millions'] * 10 + choice_context['thousands']
     return redirect('chokin')
-        
 
-def select_box(request,id):
+
+def select_box(request, id):
     print(f'chokin views.py select_box: called')
     choice_context['box1'] = NORMAL_CLASS
     choice_context['box2'] = NORMAL_CLASS
     choice_context['box3'] = NORMAL_CLASS
 
-    if id <1 or id > 3:
+    if id < 1 or id > 3:
         print(f'chokin views.py select_box: invalid box choice {id=}')
 
     if id == 1: choice_context['box1'] = HIGHLIGHT_CLASS
@@ -64,12 +68,13 @@ def select_box(request,id):
 
     return redirect('chokin')
 
-def select_proc(request,id):
+
+def select_proc(request, id):
     print(f'chokin views.py select_proc: called')
     choice_context['proc1'] = NORMAL_CLASS
     choice_context['proc2'] = NORMAL_CLASS
 
-    if id <1 or id > 2:
+    if id < 1 or id > 2:
         print(f'chokin views.py select_box: invalid box choice {id=}')
 
     if id == 1: choice_context['proc1'] = HIGHLIGHT_CLASS
@@ -77,8 +82,13 @@ def select_proc(request,id):
 
     return redirect('chokin')
 
+
 def chokin(request):
     print(f'=> chokin() called {request.POST.keys()}')
+
+    choice_context['box1display'] = "{:,}".format(choice_context['box1current'])
+    choice_context['box2display'] = "{:,}".format(choice_context['box2current'])
+    choice_context['box3display'] = "{:,}".format(choice_context['box3current'])
     choice_context['subpanel'] = 0
     # context = {
     #     'box1': NORMAL_CLASS,
@@ -149,13 +159,28 @@ def which_process():
     pass
 
 
-def confirm(request):
+def confirm(request, thousands, millions):
     # return redirect('result')
 
     # template = loader.get_template('chokin/confirm.html')
     # return HttpResponse(template.render(choice_context, request))
 
     # return HttpResponse("Hello, World!")
+    result = which_box_and_process()
+    print(f'confirm() {result=} {len(result)=}')
+    if len(result) != 2:
+        messages.error(request, '貯金箱と処理の選択が無効です。2つ共選んでください')
+
+    if len(result) == 2:
+        if result[0] not in ['box1', 'box2', 'box3']:
+            print(f'confirm error : error at box selection {result=}')
+            messages.error(request, '貯金箱を選んでください。')
+        if result[1] not in ['proc1', 'proc2']:
+            print(f'confirm error : error at process selection  {result=}')
+            messages.error(request, '処理を選んでください。')
+
+        choice_context['box'] = result[0]
+        choice_context['proc'] = result[1]
     choice_context['subpanel'] = 1
     return render(request, 'chokin/confirm.html', choice_context)
 

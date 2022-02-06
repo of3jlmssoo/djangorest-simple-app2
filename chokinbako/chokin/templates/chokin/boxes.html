@@ -5,9 +5,9 @@
         <div class="form-group">
           <a type="button" href="{% url 'select_box' 1 %}"  class="{{box1}}" type="submit" name="boxchoice1" id="box1" value="貯金箱1">貯金箱1</a>
           {% if boxpanel == 0 %}
-            <p class="text-center mb-0">{{ box1current }}</p>
+            <p class="text-center mb-0">{{ box1display }}</p>
           {% else %}
-            <p class="text-center mb-0">{{ box1current }}</p>
+            <p class="text-center mb-0">{{ box1display }}</p>
             <p class="text-center mt-0">手続き前 : {{ box1previous }}</p>
           {% endif %}
         </div>
@@ -17,9 +17,9 @@
         <div class="form-group">
           <a type="button" href="{% url 'select_box' 2 %}"  class="{{box2}}" type="submit" name="boxchoice2" id="box2" value="貯金箱2">貯金箱2</a>
           {% if boxpanel == 0 %}
-            <p class="text-center mb-0">{{ box2current }}</p>
+            <p class="text-center mb-0">{{ box2display }}</p>
           {% else %}
-            <p class="text-center mb-0">{{ box2current }}</p>
+            <p class="text-center mb-0">{{ box2display }}</p>
             <p class="text-center mt-0">手続き前 : {{ box2previous }}</p>
           {% endif %}
         </div>
@@ -28,9 +28,9 @@
         <div class="form-group">
           <a type="button" href="{% url 'select_box' 3 %}"  class="{{box3}}" type="submit" name="boxchoice3" id="box3" value="貯金箱3">貯金箱3</a>
           {% if boxpanel == 0 %}
-            <p class="text-center mb-0">{{ box3current }}</p>
+            <p class="text-center mb-0">{{ box3display }}</p>
           {% else %}
-            <p class="text-center mb-0">{{ box3current }}</p>
+            <p class="text-center mb-0">{{ box3display }}</p>
             <p class="text-center mt-0">手続き前 : {{ box3previous }}</p>
           {% endif %}
         </div>

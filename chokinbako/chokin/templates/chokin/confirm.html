@@ -3,10 +3,18 @@
 {% load static %}
 
 {% include 'chokin/boxes.html' %}
+{% include 'chokin/alerts.html' %}
 
 PRICE{{ price }}
 BOX{{ box }}
 PROC{{ proc }}
 
 <a class="btn btn-primary btn-sm" href="{% url 'chokin' %}" role="button">戻る</a>
+
+
+<p>確定ボタンを押した後に貯金箱、処理の確認を行う</p>
+<p>選んだ貯金額の残高確認</p>
+
+
+
 {% endblock  %}
