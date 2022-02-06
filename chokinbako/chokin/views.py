@@ -78,7 +78,8 @@ def select_proc(request,id):
     return redirect('chokin')
 
 def chokin(request):
-    print(f'=> chokin()() called {request.POST.keys()}')
+    print(f'=> chokin() called {request.POST.keys()}')
+    choice_context['subpanel'] = 0
     # context = {
     #     'box1': NORMAL_CLASS,
     #     'box2': NORMAL_CLASS,

@@ -21,21 +21,21 @@
 
   </div>
 
-    <label for="exampleFormControlInput1" class="form-label mt-5"><p class="text-muted mt-5 mb-0">お札の枚数を指定して金額を決めてください。最後は確定ボタンを押してください</p></label>
+    <label for="exampleFormControlInput1" class="form-label mt-5"><p class="text-muted mt-5 mb-0">お札毎に金額を指定してください。最後は確定ボタンを押してください</p></label>
     <div class="row m-3">
-    <div class="col-3 themed-grid-col">
+    <div class="col-12 col-xl-4 themed-grid-col">
         <div class="p-0">
-          <p class="mb-0">お札の枚数指定</p>
-          <p class="fs-6" style="display:inline">&ensp;(1,000円)</p>
-          <a href="{% url 'proc_bill' 'thousands' '+' %}" class="btn btn-light fs-4 align-middle  m-0" type="button" id="button-plus" > <i class="fa fa-plus"></i></a>
-          <p class="fs-4 align-middle  m-0" style="display:inline">&ensp;{{thousands}},000円</p>
+          <p class="mb-0">お札毎に金額指定</p>
+          <p class="fs-6" style="display:inline">&ensp;(1,000円札)</p>
+          <a href="{% url 'proc_bill' 'thousands' '+' %}" class="btn btn-light fs-4 align-middle m-0" type="button" id="button-plus" > <i class="fa fa-plus"></i></a>
+          <p class="fs-4 align-middle  m-0" style="display:inline">{% if thousands == 0 %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0円{% else %}&ensp;{{thousands}},000円{% endif %}</p>
           <a href="{% url 'proc_bill' 'thousands' '-' %}" class="btn btn-light fs-4 align-middle  m-0" type="button" id="button-minus" > <i class="fa fa-minus"></i> </a>
         </div>
       <div class="row">
         <div class="pb-0">
-          <p class="fs-6" style="display:inline">(10,000円)</p>
+          <p class="fs-6" style="display:inline">(10,000円札)</p>
           <a href="{% url 'proc_bill' 'millions'  '+' %}" class="btn btn-light fs-4 align-middle  mb-0" type="button" id="button-plus" > <i class="fa fa-plus"></i></a>
-          <div class="fs-4 align-middle  m-0" style="display:inline">{% if millions == 0%}&ensp;{%endif%}{{millions|mul:10}},000円</div>
+          <div class="fs-4 align-middle  m-0" style="display:inline">{% if millions == 0 %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0円{% else %}{{millions|mul:10}},000円{% endif %}</div>
           <a href="{% url 'proc_bill' 'millions' '-' %}" class="btn btn-light fs-4 align-middle  mb-0" type="button" id="button-minus" > <i class="fa fa-minus"></i> </a>
         </div>
         
@@ -43,8 +43,8 @@
     </div>
     <div class="col-3 themed-grid-col align-self-center">
           <p class="mb-0">金額</p>
-          <p class="fs-4  mb-0">{{ price }},000円</p>
-          <a class="btn btn-primary btn-sm" href="#" role="button">確定</a>
+          <p class="fs-4  mb-0 span3">{% if price == 0 %}0円{% else %}{{ price }},000円{% endif %}</p>
+          <a class="btn btn-primary btn-sm" href="{% url 'confirm' %}" role="button">確定</a>
     </div>
   </div>
 
