@@ -8,6 +8,9 @@ from django.contrib import messages
 HIGHLIGHT_CLASS = "btn btn-success   w-100 btn-lg rounded-pill p-4"
 NORMAL_CLASS = "btn btn-secondary w-100 btn-lg rounded-pill p-4"
 
+NORMAL_BUTTON = "btn btn-primary btn-sm"
+DISABLED_BUTTON = "btn btn-primary btn-sm disabled"
+
 choice_context = {
     'box1': NORMAL_CLASS,
     'box2': NORMAL_CLASS,
@@ -31,6 +34,7 @@ choice_context = {
     'box': 0,
     'proc': 0,
     'message': '',
+    'chokinkakutei': DISABLED_BUTTON,
 }
 
 
@@ -50,6 +54,17 @@ def proc_bill(request, target, proc):
     if target == 'millions' and proc == '-' and choice_context['millions'] > 0:
         choice_context['millions'] -= 1
 
+    if HIGHLIGHT_CLASS in [
+            choice_context['box1'],
+            choice_context['box2'],
+            choice_context['box3']] and HIGHLIGHT_CLASS in [
+            choice_context['proc1'],
+            choice_context['proc2']]:
+        choice_context['chokinkakutei'] = NORMAL_BUTTON
+
+    if choice_context['millions'] == 0 and choice_context['thousands'] == 0:
+        choice_context['chokinkakutei'] = DISABLED_BUTTON
+
     choice_context['price'] = choice_context['millions'] * 10 + choice_context['thousands']
     return redirect('chokin')
 
@@ -67,6 +82,9 @@ def select_box(request, id):
     if id == 2: choice_context['box2'] = HIGHLIGHT_CLASS
     if id == 3: choice_context['box3'] = HIGHLIGHT_CLASS
 
+    if (HIGHLIGHT_CLASS in [choice_context['proc1'], choice_context['proc2']]) and (choice_context['millions'] > 0 or choice_context['thousands'] > 0):
+        choice_context['chokinkakutei'] = NORMAL_BUTTON
+
     return redirect('chokin')
 
 
@@ -80,6 +98,10 @@ def select_proc(request, id):
 
     if id == 1: choice_context['proc1'] = HIGHLIGHT_CLASS
     if id == 2: choice_context['proc2'] = HIGHLIGHT_CLASS
+
+    if (HIGHLIGHT_CLASS in [choice_context['box1'], choice_context['box2'], choice_context['box3']]) and (
+            choice_context['millions'] > 0 or choice_context['thousands'] > 0):
+        choice_context['chokinkakutei'] = NORMAL_BUTTON
 
     return redirect('chokin')
 
@@ -165,6 +187,10 @@ def resetchokin(request):
     clear_choices()
     choice_context['boxpanel'] = 0
     choice_context['subpanel'] = 0
+    choice_context['millions'] = 0
+    choice_context['thousands'] = 0
+
+    choice_context['chokinkakutei'] = DISABLED_BUTTON
     return render(request, 'chokin/chokin.html', choice_context)
 
 

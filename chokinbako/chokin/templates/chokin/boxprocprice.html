@@ -42,7 +42,7 @@
     <div class="col-3 themed-grid-col align-self-center">
           <p class="mb-0">金額</p>
           <p class="fs-4  mb-0 span3">{% if price == 0 %}0円{% else %}{{ price }},000円{% endif %}</p>
-          <a class="btn btn-primary btn-sm" href="{% url 'confirm' thousands millions %}" role="button">確定</a>
+          <a class="{{chokinkakutei}}" href="{% url 'confirm' thousands millions %}" role="button">確定</a>
     </div>
   </div>
 
