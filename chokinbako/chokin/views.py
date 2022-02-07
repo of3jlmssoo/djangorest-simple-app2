@@ -189,6 +189,7 @@ def resetchokin(request):
     choice_context['subpanel'] = 0
     choice_context['millions'] = 0
     choice_context['thousands'] = 0
+    choice_context['price'] = 0
 
     choice_context['chokinkakutei'] = DISABLED_BUTTON
     return render(request, 'chokin/chokin.html', choice_context)
