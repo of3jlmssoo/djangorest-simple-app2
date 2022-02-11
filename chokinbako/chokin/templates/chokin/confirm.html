@@ -12,10 +12,46 @@ PROC{{ proc }}
 <a class="btn btn-primary btn-sm" href="{% url 'chokin' %}" role="button">戻る</a>
 
 {{ message }}
+{{ message2 }}
 
 <p>確定ボタンを押した後に貯金箱、処理の確認を行う</p>
 <p>選んだ貯金額の残高確認</p>
 
+  <h3>Example table</h3>
+        <p>And don't forget about tables in these posts:</p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="col-xl-3" ></th>
+              <th>貯金箱1</th>
+              <th>貯金箱2</th>
+              <th>貯金箱3</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td  class="col-xl-2" >貯金額</td>
+              <td>{{box1display}}</td>
+              <td>{{box2display}}</td>
+              <td>{{box3display}}</td>
+            </tr>
+            <tr>
+              <td  class="col-xl-2" >今回</td>
+              <td><div class="text-right">{{box1thistime}}</div></td>
+              <td><div class="text-right">{{box2thistime}}</div></td>
+              <td><div class="text-right">{{box3thistime}}</div></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td  class="col-xl-2" >手続き後(まだ確定していません)</td>
+              <td>{{box1after}}</td>
+              <td>{{box2after}}</td>
+              <td>{{box3after}}</td>
+            </tr>
+          </tfoot>
+        </table>
+        
 
 
 {% endblock  %}
