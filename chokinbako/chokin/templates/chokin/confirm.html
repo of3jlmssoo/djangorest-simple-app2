@@ -2,23 +2,21 @@
 {% block content %}
 {% load static %}
 
-{% include 'chokin/boxes.html' %}
-{% include 'chokin/alerts.html' %}
+<!-- {% include 'chokin/boxes.html' %} -->
+<!-- {% include 'chokin/alerts.html' %} -->
 
-PRICE{{ price }}
+<!-- PRICE{{ price }}
 BOX{{ box }}
 PROC{{ proc }}
 
-<a class="btn btn-primary btn-sm" href="{% url 'chokin' %}" role="button">戻る</a>
 
 {{ message }}
-{{ message2 }}
+{{ message2 }} -->
 
-<p>確定ボタンを押した後に貯金箱、処理の確認を行う</p>
-<p>選んだ貯金額の残高確認</p>
+<!-- <p>確定ボタンを押した後に貯金箱、処理の確認を行う</p>
+<p>選んだ貯金額の残高確認</p> -->
 
-  <h3>Example table</h3>
-        <p>And don't forget about tables in these posts:</p>
+  <h3>あなたの貯金箱の状況と今回の手続き</h3>
         <table class="table">
           <thead>
             <tr>
@@ -30,7 +28,7 @@ PROC{{ proc }}
           </thead>
           <tbody>
             <tr>
-              <td  class="col-xl-2" >貯金額</td>
+              <td  class="col-xl-2" >貯金箱の中</td>
               <td>{{box1display}}</td>
               <td>{{box2display}}</td>
               <td>{{box3display}}</td>
@@ -45,13 +43,14 @@ PROC{{ proc }}
           <tfoot>
             <tr>
               <td  class="col-xl-2" >手続き後(まだ確定していません)</td>
-              <td>{{box1after}}</td>
-              <td>{{box2after}}</td>
-              <td>{{box3after}}</td>
+              <td><p class="{{box1afterattribute}}">{{box1after}}</p></td>
+              <td><p class="{{box2afterattribute}}">{{box2after}}</p></td>
+              <td><p class="{{box3afterattribute}}">{{box3after}}</p></td>
             </tr>
           </tfoot>
         </table>
         
 
+<a class="btn btn-primary btn-sm" href="{% url 'chokin' %}" role="button">戻る</a>
 
 {% endblock  %}

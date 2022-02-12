@@ -24,14 +24,14 @@
     <div class="col-12 col-xl-4 themed-grid-col">
         <div class="p-0">
           <p class="mb-0">お札毎に金額指定</p>
-          <p class="fs-6" style="display:inline">&ensp;(1,000円札)</p>
+          <p class="fs-6" style="display:inline" >&ensp;(1,000円札)<i class="bi bi-chat ps-1" data-bs-toggle="tooltip" data-bs-placement="top" title="1,000円札は最大9枚"></i></p>
           <a href="{% url 'proc_bill' 'thousands' '+' %}" class="btn btn-light fs-4 align-middle m-0" type="button" id="button-plus" > <i class="fa fa-plus"></i></a>
           <p class="fs-4 align-middle  m-0" style="display:inline">{% if thousands == 0 %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0円{% else %}&ensp;{{thousands}},000円{% endif %}</p>
           <a href="{% url 'proc_bill' 'thousands' '-' %}" class="btn btn-light fs-4 align-middle  m-0" type="button" id="button-minus" > <i class="fa fa-minus"></i> </a>
         </div>
       <div class="row">
         <div class="pb-0">
-          <p class="fs-6" style="display:inline">(10,000円札)</p>
+          <p class="fs-6" style="display:inline">(10,000円札)<i class="bi bi-chat ps-1" data-bs-toggle="tooltip" data-bs-placement="top" title="10,000円札は最大20枚"></i></p>
           <a href="{% url 'proc_bill' 'millions'  '+' %}" class="btn btn-light fs-4 align-middle  mb-0" type="button" id="button-plus" > <i class="fa fa-plus"></i></a>
           <div class="fs-4 align-middle  m-0" style="display:inline">{% if millions == 0 %}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0円{% else %}{{millions|mul:10}},000円{% endif %}</div>
           <a href="{% url 'proc_bill' 'millions' '-' %}" class="btn btn-light fs-4 align-middle  mb-0" type="button" id="button-minus" > <i class="fa fa-minus"></i> </a>

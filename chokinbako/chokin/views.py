@@ -11,6 +11,9 @@ NORMAL_CLASS = "btn btn-secondary w-100 btn-lg rounded-pill p-4"
 NORMAL_BUTTON = "btn btn-primary btn-sm"
 DISABLED_BUTTON = "btn btn-primary btn-sm disabled"
 
+MAX_DEPOSIT = 300000
+MIN_DEPOSIT = 0
+
 choice_context = {
     'box1': NORMAL_CLASS,
     'box2': NORMAL_CLASS,
@@ -32,6 +35,9 @@ choice_context = {
     'box1after': 0,
     'box2after': 0,
     'box3after': 0,
+    'box1afterattribute': "",
+    'box2afterattribute': "",
+    'box3afterattribute': "",
     'boxpanel': 0,
     'subpanel': 0,
     'thousands': 0,
@@ -120,52 +126,6 @@ def chokin(request):
     choice_context['box2display'] = "{:,}".format(choice_context['box2current'])
     choice_context['box3display'] = "{:,}".format(choice_context['box3current'])
     choice_context['subpanel'] = 0
-    # context = {
-    #     'box1': NORMAL_CLASS,
-    #     'box2': NORMAL_CLASS,
-    #     'box3': NORMAL_CLASS,
-    # }
-
-    # if 'boxchoice1' in request.POST:
-    #     choice_context['box1'] = HIGHLIGHT_CLASS
-    #     choice_context['box2'] = NORMAL_CLASS
-    #     choice_context['box3'] = NORMAL_CLASS
-    # if 'boxchoice2' in request.POST:
-    #     choice_context['box1'] = NORMAL_CLASS
-    #     choice_context['box2'] = HIGHLIGHT_CLASS
-    #     choice_context['box3'] = NORMAL_CLASS
-    # if 'boxchoice3' in request.POST:
-    #     choice_context['box1'] = NORMAL_CLASS
-    #     choice_context['box2'] = NORMAL_CLASS
-    #     choice_context['box3'] = HIGHLIGHT_CLASS
-    # if 'boxchoice4' in request.POST:
-    #     choice_context['proc1'] = HIGHLIGHT_CLASS
-    #     choice_context['proc2'] = NORMAL_CLASS
-    # if 'boxchoice5' in request.POST:
-    #     choice_context['proc1'] = NORMAL_CLASS
-    #     choice_context['proc2'] = HIGHLIGHT_CLASS
-    # if 'price1' in request.POST:
-    #     # print(f'=> chokin()() called {request.POST.get("price1")=} {which_box_and_process()=}')
-    #     # return redirect('result')
-    #     # return render(request, 'chokin/result.html', request.POST.get("price1"),which_box_and_process())
-
-    #     # price = request.POST.get("price1")
-    #     choice_context['price'] = request.POST.get("price1")
-    #     box_proc = which_box_and_process()
-    #     choice_context['box'] = box_proc[0]
-    #     choice_context['proc'] = box_proc[1]
-
-    #     # template=loader.get_template('chokin/result.html')
-    #     # context ={'price':price,'box':box_proc[0], 'proc':box_proc[1]}
-    #     # return HttpResponse(template.render(context,request))
-
-    #     # return HttpResponse("Hello, World!")
-    #     return redirect('confirm')
-    #     # return render(request, 'chokin/result.html', {'price':price,'box':box_proc[0], 'proc':box_proc[1]})
-
-    #     # result(request, price,box_proc[0], box_proc[1])
-
-    # return render(request, 'chokin/base.html', choice_context)
     return render(request, 'chokin/chokin.html', choice_context)
 
 
@@ -213,25 +173,54 @@ def set_pricethistime():
     return sign + "{:,}".format(choice_context['price'] * 1000)
 
 
-def set_priceafter():
+def check_set_priceafter(request):
+
     choice_context['box1after'] = 0
     choice_context['box2after'] = 0
     choice_context['box3after'] = 0
+
+    choice_context['box1afterattribute'] = ""
+    choice_context['box2afterattribute'] = ""
+    choice_context['box3afterattribute'] = ""
+
+    currentprice = 0
+    afterprice = 0
     if choice_context['box'] == 'box1':
-        if choice_context['proc'] == 'proc1':
-            return "{:,}".format(choice_context['box1current'] + choice_context['price'] * 1000)
-        elif choice_context['proc'] == 'proc2':
-            return "{:,}".format(choice_context['box1current'] - choice_context['price'] * 1000)
+        currentprice = choice_context['box1current']
     elif choice_context['box'] == 'box2':
-        if choice_context['proc'] == 'proc1':
-            return "{:,}".format(choice_context['box2current'] + choice_context['price'] * 1000)
-        elif choice_context['proc'] == 'proc2':
-            return "{:,}".format(choice_context['box2current'] - choice_context['price'] * 1000)
+        currentprice = choice_context['box2current']
     elif choice_context['box'] == 'box3':
-        if choice_context['proc'] == 'proc1':
-            return "{:,}".format(choice_context['box3current'] + choice_context['price'] * 1000)
-        elif choice_context['proc'] == 'proc2':
-            return "{:,}".format(choice_context['box3current'] - choice_context['price'] * 1000)
+        currentprice = choice_context['box3current']
+    else:
+        messages.error(request, '手続き後の試算でエラーが発生しました(貯金箱の確認でエラー)')
+
+    if choice_context['proc'] == 'proc1':
+        afterprice = currentprice + choice_context['price'] * 1000
+    elif choice_context['proc'] == 'proc2':
+        afterprice = currentprice - choice_context['price'] * 1000
+    else:
+        messages.error(request, '手続き後の試算でエラーが発生しました(手続きの確認でエラー)')
+
+    if afterprice > MAX_DEPOSIT:
+        if choice_context['box'] == 'box1':
+            choice_context['box1afterattribute'] = "text-danger"
+        elif choice_context['box'] == 'box2':
+            choice_context['box2afterattribute'] = "text-danger"
+        elif choice_context['box'] == 'box3':
+            choice_context['box3afterattribute'] = "text-danger"
+        messages.error(request, f'貯金額が多すぎます。{"{:,}".format(MAX_DEPOSIT)}までしか貯金できません。')
+
+    if afterprice < MIN_DEPOSIT:
+        if choice_context['box'] == 'box1':
+            choice_context['box1afterattribute'] = "text-danger"
+        elif choice_context['box'] == 'box2':
+            choice_context['box2afterattribute'] = "text-danger"
+        elif choice_context['box'] == 'box3':
+            choice_context['box3afterattribute'] = "text-danger"
+
+        messages.error(request, f'使う額が多すぎます。')
+
+    return "{:,}".format(afterprice)
 
 
 def confirm(request, thousands, millions):
@@ -266,24 +255,18 @@ def confirm(request, thousands, millions):
         choice_context['proc'] = result[1]
         choice_context['subpanel'] = 1
 
-        # 1000円を　貯金箱1   から引き出します。
-        # 1000円を　貯金箱1  で貯めます
-        #
-        #
-        #
-        # 。
         print(f"{choice_context['box']=} {choice_context['proc']=}")
         if choice_context['box'] == 'box1':
             box = '貯金箱1'
-            choice_context['box1after'] = set_priceafter()
+            choice_context['box1after'] = check_set_priceafter(request)
             choice_context['box1thistime'] = set_pricethistime()
         elif choice_context['box'] == 'box2':
             box = '貯金箱2'
-            choice_context['box2after'] = set_priceafter()
+            choice_context['box2after'] = check_set_priceafter(request)
             choice_context['box2thistime'] = set_pricethistime()
         elif choice_context['box'] == 'box3':
             box = '貯金箱3'
-            choice_context['box3after'] = set_priceafter()
+            choice_context['box3after'] = check_set_priceafter(request)
             choice_context['box3thistime'] = set_pricethistime()
         else:
             print(f'confirm() 貯金箱指定が無効')
