@@ -38,6 +38,7 @@ choice_context = {
     'box1afterattribute': "",
     'box2afterattribute': "",
     'box3afterattribute': "",
+    'confirmed': 0,
     'boxpanel': 0,
     'subpanel': 0,
     'thousands': 0,
@@ -173,6 +174,29 @@ def set_pricethistime():
     return sign + "{:,}".format(choice_context['price'] * 1000)
 
 
+def set_afterpriceattribute():
+    if choice_context['box'] == 'box1':
+        choice_context['box1afterattribute'] = "text-danger"
+    elif choice_context['box'] == 'box2':
+        choice_context['box2afterattribute'] = "text-danger"
+    elif choice_context['box'] == 'box3':
+        choice_context['box3afterattribute'] = "text-danger"
+
+
+def set_currentprice(request):
+    currentprice = 0
+    if choice_context['box'] == 'box1':
+        currentprice = choice_context['box1current']
+    elif choice_context['box'] == 'box2':
+        currentprice = choice_context['box2current']
+    elif choice_context['box'] == 'box3':
+        currentprice = choice_context['box3current']
+    else:
+        messages.error(request, '手続き後の試算でエラーが発生しました(貯金箱の確認でエラー)')
+
+    return currentprice
+
+
 def check_set_priceafter(request):
 
     choice_context['box1after'] = 0
@@ -185,14 +209,8 @@ def check_set_priceafter(request):
 
     currentprice = 0
     afterprice = 0
-    if choice_context['box'] == 'box1':
-        currentprice = choice_context['box1current']
-    elif choice_context['box'] == 'box2':
-        currentprice = choice_context['box2current']
-    elif choice_context['box'] == 'box3':
-        currentprice = choice_context['box3current']
-    else:
-        messages.error(request, '手続き後の試算でエラーが発生しました(貯金箱の確認でエラー)')
+
+    currentprice = set_currentprice(request)
 
     if choice_context['proc'] == 'proc1':
         afterprice = currentprice + choice_context['price'] * 1000
@@ -202,28 +220,36 @@ def check_set_priceafter(request):
         messages.error(request, '手続き後の試算でエラーが発生しました(手続きの確認でエラー)')
 
     if afterprice > MAX_DEPOSIT:
-        if choice_context['box'] == 'box1':
-            choice_context['box1afterattribute'] = "text-danger"
-        elif choice_context['box'] == 'box2':
-            choice_context['box2afterattribute'] = "text-danger"
-        elif choice_context['box'] == 'box3':
-            choice_context['box3afterattribute'] = "text-danger"
+        set_afterpriceattribute()
         messages.error(request, f'貯金額が多すぎます。{"{:,}".format(MAX_DEPOSIT)}までしか貯金できません。')
 
     if afterprice < MIN_DEPOSIT:
-        if choice_context['box'] == 'box1':
-            choice_context['box1afterattribute'] = "text-danger"
-        elif choice_context['box'] == 'box2':
-            choice_context['box2afterattribute'] = "text-danger"
-        elif choice_context['box'] == 'box3':
-            choice_context['box3afterattribute'] = "text-danger"
-
+        set_afterpriceattribute()
         messages.error(request, f'使う額が多すぎます。')
 
     return "{:,}".format(afterprice)
 
 
+def set_current():
+    if choice_context['proc'] == 'proc1':
+        if choice_context['box'] == 'box1':
+            choice_context['box1current'] += choice_context['price'] * 1000
+        elif choice_context['box'] == 'box2':
+            choice_context['box2current'] += choice_context['price'] * 1000
+        elif choice_context['box'] == 'box3':
+            choice_context['box3current'] += choice_context['price'] * 1000
+    elif choice_context['proc'] == 'proc2':
+        if choice_context['box'] == 'box1':
+            choice_context['box1current'] -= choice_context['price'] * 1000
+        elif choice_context['box'] == 'box2':
+            choice_context['box2current'] -= choice_context['price'] * 1000
+        elif choice_context['box'] == 'box3':
+            choice_context['box3current'] -= choice_context['price'] * 1000
+
+
 def confirm(request, thousands, millions):
+    print(f"============> {choice_context['confirmed']=} {thousands=} {millions=}")
+
     # return redirect('result')
 
     # template = loader.get_template('chokin/confirm.html')
@@ -231,18 +257,25 @@ def confirm(request, thousands, millions):
 
     # return HttpResponse("Hello, World!")
 
-    choice_context['box1thistime'] = 0
-    choice_context['box2thistime'] = 0
-    choice_context['box3thistime'] = 0
-    choice_context['box1after'] = 0
-    choice_context['box2after'] = 0
-    choice_context['box3after'] = 0
+    if thousands == 0 and millions == 0:
+        choice_context['confirmed'] = 1
+        set_current()
+    else:
+        choice_context['confirmed'] = 0
+
+        choice_context['box1thistime'] = 0
+        choice_context['box2thistime'] = 0
+        choice_context['box3thistime'] = 0
+        choice_context['box1after'] = 0
+        choice_context['box2after'] = 0
+        choice_context['box3after'] = 0
 
     result = which_box_and_process()
     print(f'confirm() {result=} {len(result)=}')
     if len(result) != 2:
         messages.error(request, '貯金箱と処理の選択が無効です。2つ共選んでください')
 
+    # if len(result) == 2 and choice_context['confirmed'] == 0:
     if len(result) == 2:
         if result[0] not in ['box1', 'box2', 'box3']:
             print(f'confirm error : error at box selection {result=}')
@@ -255,34 +288,35 @@ def confirm(request, thousands, millions):
         choice_context['proc'] = result[1]
         choice_context['subpanel'] = 1
 
-        print(f"{choice_context['box']=} {choice_context['proc']=}")
-        if choice_context['box'] == 'box1':
-            box = '貯金箱1'
-            choice_context['box1after'] = check_set_priceafter(request)
-            choice_context['box1thistime'] = set_pricethistime()
-        elif choice_context['box'] == 'box2':
-            box = '貯金箱2'
-            choice_context['box2after'] = check_set_priceafter(request)
-            choice_context['box2thistime'] = set_pricethistime()
-        elif choice_context['box'] == 'box3':
-            box = '貯金箱3'
-            choice_context['box3after'] = check_set_priceafter(request)
-            choice_context['box3thistime'] = set_pricethistime()
-        else:
-            print(f'confirm() 貯金箱指定が無効')
+        if choice_context['confirmed'] == 0:
+            print(f"{choice_context['box']=} {choice_context['proc']=}")
+            if choice_context['box'] == 'box1':
+                box = '貯金箱1'
+                choice_context['box1after'] = check_set_priceafter(request)
+                choice_context['box1thistime'] = set_pricethistime()
+            elif choice_context['box'] == 'box2':
+                box = '貯金箱2'
+                choice_context['box2after'] = check_set_priceafter(request)
+                choice_context['box2thistime'] = set_pricethistime()
+            elif choice_context['box'] == 'box3':
+                box = '貯金箱3'
+                choice_context['box3after'] = check_set_priceafter(request)
+                choice_context['box3thistime'] = set_pricethistime()
+            else:
+                print(f'confirm() 貯金箱指定が無効')
 
-        if choice_context['proc'] == 'proc1':
-            proc = 'で貯めます。'
-        elif choice_context['proc'] == 'proc2':
-            proc = 'から引き出します。'
-        else:
-            print(f'confirm() 処理指定が無効')
+            if choice_context['proc'] == 'proc1':
+                proc = 'で貯めます。'
+            elif choice_context['proc'] == 'proc2':
+                proc = 'から引き出します。'
+            else:
+                print(f'confirm() 処理指定が無効')
 
-        val = millions * 10000 + thousands * 1000
-        msg = str(val) + 'を' + box + proc
-        choice_context['message'] = msg
+            val = millions * 10000 + thousands * 1000
+            msg = str(val) + 'を' + box + proc
+            choice_context['message'] = msg
 
-        choice_context['message2'] = f"{choice_context['price']=} "
+            choice_context['message2'] = f"{choice_context['price']=} "
 
         return render(request, 'chokin/confirm.html', choice_context)
     return render(request, 'chokin/chokin.html', choice_context)

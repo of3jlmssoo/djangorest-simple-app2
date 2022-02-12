@@ -42,7 +42,11 @@ PROC{{ proc }}
           </tbody>
           <tfoot>
             <tr>
-              <td  class="col-xl-2" >手続き後(まだ確定していません)</td>
+              {% if confirmed %}
+                <td  class="col-xl-2" >手続き後(確定しました)</td>
+              {% else %}
+                <td  class="col-xl-2" >手続き後(まだ確定していません)</td>
+              {% endif %}
               <td><p class="{{box1afterattribute}}">{{box1after}}</p></td>
               <td><p class="{{box2afterattribute}}">{{box2after}}</p></td>
               <td><p class="{{box3afterattribute}}">{{box3after}}</p></td>
@@ -50,7 +54,16 @@ PROC{{ proc }}
           </tfoot>
         </table>
         
-
-<a class="btn btn-primary btn-sm" href="{% url 'chokin' %}" role="button">戻る</a>
+  {% if confirmed == 1 %}
+    <a class="btn btn-secondary btn-sm" href="{% url 'chokin' %}" role="button">戻る</a>
+  {% else %}
+    {% if messages %}
+      <a class="btn btn-secondary btn-sm disabled" href="{% url 'chokin' %}" role="button">確定</a>
+      <a class="btn btn-primary btn-sm" href="{% url 'chokin' %}" role="button">戻る</a>
+    {%else%}
+      <a class="btn btn-primary btn-sm" href="{% url 'confirm' thousands=0 millions=0 %}" role="button">確定</a>
+      <a class="btn btn-secondary btn-sm" href="{% url 'chokin' %}" role="button">戻る</a>
+    {%endif%}
+  {% endif %}
 
 {% endblock  %}
