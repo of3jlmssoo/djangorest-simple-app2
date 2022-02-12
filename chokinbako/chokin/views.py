@@ -123,6 +123,13 @@ def select_proc(request, id):
 def chokin(request):
     # print(f'=> chokin() called {request.POST.keys()}')
 
+    if choice_context['confirmed'] == 1:
+        clear_choices()
+        choice_context['confirmed'] = 0
+        choice_context['millions'] = 0
+        choice_context['thousands'] = 0
+        choice_context['price'] = 0
+
     choice_context['box1display'] = "{:,}".format(choice_context['box1current'])
     choice_context['box2display'] = "{:,}".format(choice_context['box2current'])
     choice_context['box3display'] = "{:,}".format(choice_context['box3current'])
