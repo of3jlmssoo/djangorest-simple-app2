@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
 from django.contrib import messages
+from .models import Chokinbako
 
 HIGHLIGHT_CLASS = "btn btn-success   w-100 btn-lg rounded-pill p-4"
 NORMAL_CLASS = "btn btn-secondary w-100 btn-lg rounded-pill p-4"
@@ -254,9 +255,18 @@ def set_current():
             choice_context['box3current'] -= choice_context['price'] * 1000
 
 
+def access_to_db():
+
+    q = Chokinbako.objects.get(chokinbako_name='box1')
+    print(f'{q.chokinbako_value=}')
+    q.chokinbako_value = 200000
+    q.save()
+
+
 def confirm(request, thousands, millions):
     print(f"============> {choice_context['confirmed']=} {thousands=} {millions=}")
 
+    access_to_db()
     # return redirect('result')
 
     # template = loader.get_template('chokin/confirm.html')
