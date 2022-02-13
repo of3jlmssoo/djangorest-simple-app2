@@ -166,4 +166,5 @@ cython_debug/
 work.py
 .~lock.*
 .env
+migrations/
 # End of https://www.toptal.com/developers/gitignore/api/django
