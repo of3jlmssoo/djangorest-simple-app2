@@ -45,3 +45,108 @@
       </div>
     </div>
 
+
+
+
+
+
+<div class="row">
+  <div class="col-xl-2">
+    <div class="card border-light">
+      <div class="card-body">
+        <p class="cart-title m-0 text-end">(1,000円札)<i class="bi bi-chat ps-1" data-bs-toggle="tooltip" data-bs-placement="top" title="1,000円札は最大9枚"></i></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-1">
+    <div class="card  border-light text-end">
+      <div class="card-body">
+        <a href="{% url 'proc_bill' 'thousands' '+' %}" class="card-title m-0 " ><i class="bi bi-plus-lg"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-2">
+    <div class="card border-light text-end">
+      <div class="card-body">
+        <p class="card-title m-0 text-end" >{% if thousands == 0 %}0円{% else %}{{thousands}},000円{% endif %}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-1">
+    <div class="card border-light">
+      <div class="card-body">
+        <a href="{% url 'proc_bill' 'thousands' '-' %}"  class="card-title m-0 " ><i class="bi bi-dash-lg"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class="row">
+  <div class="col-xl-2">
+    <div class="card border-light">
+      <div class="card-body">
+        <p class="cart-title m-0 text-end">(10,000円札)<i class="bi bi-chat ps-1" data-bs-toggle="tooltip" data-bs-placement="top" title="10,000円札は最大20枚"></i></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-1">
+    <div class="card border-light text-end">
+      <div class="card-body">
+        <a href="{% url 'proc_bill' 'millions'  '+' %}" class="card-title m-0 " ><i class="bi bi-plus-lg"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-2">
+    <div class="card border-light text-end">
+      <div class="card-body">
+        <p class="card-title m-0 text-end" >{% if millions == 0 %}0円{% else %}{{millions|mul:10}},000円{% endif %}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-1">
+    <div class="card border-light">
+      <div class="card-body">
+        <a href="{% url 'proc_bill' 'millions' '-' %}"   class="card-title m-0 " ><i class="bi bi-dash-lg"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="row">
+  <div class="col-xl-2">
+    <div class="card border-light">
+      <div class="card-body">
+
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-1">
+    <div class="card border-light text-end">
+      <div class="card-body">
+          合計
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-2">
+    <div class="card border-light text-end">
+      <div class="card-body">
+        <p class="card-title m-0 text-end">{% if price == 0 %}0円{% else %}{{ price }},000円{% endif %}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-1">
+    <div class="card border-light">
+      <div class="card-body">
+        <a class="{{chokinkakutei}}" href="{% url 'confirm' thousands millions %}" role="button">確定</a>
+      </div>
+    </div>
+  </div>
+</div>
+
