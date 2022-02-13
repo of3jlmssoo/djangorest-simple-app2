@@ -15,21 +15,26 @@ DISABLED_BUTTON = "btn btn-primary btn-sm disabled"
 MAX_DEPOSIT = 300000
 MIN_DEPOSIT = 0
 
+box_objects = {
+    'box1': None,
+    'box2': None,
+    'box3': None,
+}
 choice_context = {
     'box1': NORMAL_CLASS,
     'box2': NORMAL_CLASS,
     'box3': NORMAL_CLASS,
     'proc1': NORMAL_CLASS,
     'proc2': NORMAL_CLASS,
-    'box1display': 200000,  # formatted string with thousand separator
-    'box2display': 100000,  # formatted string with thousand separator
-    'box3display': 50000,   # formatted string with thousand separator
-    'box1current': 200000,  # int
-    'box2current': 100000,  # int
-    'box3current': 50000,   # int
-    'box1previous': 123,    # int
-    'box2previous': 456,    # int
-    'box3previous': 789,    # int
+    'box1display': None,  # formatted string with thousand separator
+    'box2display': None,  # formatted string with thousand separator
+    'box3display': None,   # formatted string with thousand separator
+    'box1current': None,  # int
+    'box2current': None,  # int
+    'box3current': None,   # int
+    'box1previous': None,    # int
+    'box2previous': None,    # int
+    'box3previous': None,    # int
     'box1thistime': 0,
     'box2thistime': 0,
     'box3thistime': 0,
@@ -123,6 +128,14 @@ def select_proc(request, id):
 
 def chokin(request):
     # print(f'=> chokin() called {request.POST.keys()}')
+
+    if box_objects['box1'] is None:
+        box_objects['box1'] = Chokinbako.objects.get(chokinbako_name='box1')
+        box_objects['box2'] = Chokinbako.objects.get(chokinbako_name='box2')
+        box_objects['box3'] = Chokinbako.objects.get(chokinbako_name='box3')
+        choice_context['box1current'] = box_objects['box1'].chokinbako_value
+        choice_context['box2current'] = box_objects['box2'].chokinbako_value
+        choice_context['box3current'] = box_objects['box3'].chokinbako_value
 
     if choice_context['confirmed'] == 1:
         clear_choices()
@@ -242,17 +255,29 @@ def set_current():
     if choice_context['proc'] == 'proc1':
         if choice_context['box'] == 'box1':
             choice_context['box1current'] += choice_context['price'] * 1000
+            box_objects['box1'].chokinbako_value = choice_context['box1current']
+            box_objects['box1'].save()
         elif choice_context['box'] == 'box2':
             choice_context['box2current'] += choice_context['price'] * 1000
+            box_objects['box2'].chokinbako_value = choice_context['box2current']
+            box_objects['box2'].save()
         elif choice_context['box'] == 'box3':
             choice_context['box3current'] += choice_context['price'] * 1000
+            box_objects['box3'].chokinbako_value = choice_context['box3current']
+            box_objects['box3'].save()
     elif choice_context['proc'] == 'proc2':
         if choice_context['box'] == 'box1':
             choice_context['box1current'] -= choice_context['price'] * 1000
+            box_objects['box1'].chokinbako_value = choice_context['box1current']
+            box_objects['box1'].save()
         elif choice_context['box'] == 'box2':
             choice_context['box2current'] -= choice_context['price'] * 1000
+            box_objects['box2'].chokinbako_value = choice_context['box2current']
+            box_objects['box2'].save()
         elif choice_context['box'] == 'box3':
             choice_context['box3current'] -= choice_context['price'] * 1000
+            box_objects['box3'].chokinbako_value = choice_context['box3current']
+            box_objects['box3'].save()
 
 
 def access_to_db():
@@ -266,13 +291,7 @@ def access_to_db():
 def confirm(request, thousands, millions):
     print(f"============> {choice_context['confirmed']=} {thousands=} {millions=}")
 
-    access_to_db()
-    # return redirect('result')
-
-    # template = loader.get_template('chokin/confirm.html')
-    # return HttpResponse(template.render(choice_context, request))
-
-    # return HttpResponse("Hello, World!")
+    # access_to_db()
 
     if thousands == 0 and millions == 0:
         choice_context['confirmed'] = 1
