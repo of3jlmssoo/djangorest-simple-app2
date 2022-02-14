@@ -44,9 +44,7 @@ choice_context = {
     'box1afterattribute': "",
     'box2afterattribute': "",
     'box3afterattribute': "",
-    'confirmed': 0,
-    'boxpanel': 0,
-    'subpanel': 0,
+    'confirmed': 0, # confirm画面を制御。最初(==0)は確認を行い、選択肢は確定と戻る。確定した場合(==1)選択肢は戻るのみとなる
     'thousands': 0,
     'millions': 0,
     'price': 0,
@@ -56,14 +54,31 @@ choice_context = {
     'message2': '',
     'chokinkakutei': DISABLED_BUTTON,
 }
+"""
+confirmedの推移
+1. 貯金箱、処理、金額が指定される               confirmed == 0
+2. confirm.htmlが呼ばれる。                     confirmed == 0
+    confirmed == 1なので確定ボタンと戻るボタンが利用可能
+        確定ボタン 再びconfirm.htmlへ。この際thousands=0 millions=0がパラメータとして使われる
+        戻るボタン chokin.htmlへ
+        (thousands=0 millions=0は1.の画面からコールされた場合は無い組み合わせ)
+3. views.py def confirm()でthousands=0 millions=0の場合
+        choice_context['confirmed'] = 1         confirmed == 1
+        set_current() (box?currentを更新し、かつ、DBに新しい額を設定する)
+    が実行される。
+    その後return renderでchokin.htmlへ
+4. views.py def chokin()ではconfirmed == 1の場合
+    貯金箱選択と処理選択をクリアし
+    金額指定をクリアし
+    confirmedを0にする                          confirmed == 0
+"""
 
-
-def index(request):
-    # return HttpResponse("Hello, world. You're at the polls index.")
-    return render(request, 'chokin/base.html', choice_context)
 
 
 def proc_bill(request, target, proc):
+    """ 金額指定のboxprice1.html/boxprice2.htmlの中で、+ボタン、-ボタンがクリックされるとコールされる
+    """
+    # + or -のクリック後の金額が想定の範囲内であれば+1 or -1する
     if target == 'thousands' and proc == '+' and choice_context['thousands'] < 9:
         choice_context['thousands'] += 1
     if target == 'millions' and proc == '+' and choice_context['millions'] < 20:
@@ -74,6 +89,8 @@ def proc_bill(request, target, proc):
     if target == 'millions' and proc == '-' and choice_context['millions'] > 0:
         choice_context['millions'] -= 1
 
+    # 貯金箱が選択され、処理が選択されていれば確定ボタンを使えるようにするが
+    # 金額指定が行われていない場合disable状態にする
     if HIGHLIGHT_CLASS in [
             choice_context['box1'],
             choice_context['box2'],
@@ -85,12 +102,16 @@ def proc_bill(request, target, proc):
     if choice_context['millions'] == 0 and choice_context['thousands'] == 0:
         choice_context['chokinkakutei'] = DISABLED_BUTTON
 
+    # 金額を'price'に保持する
     choice_context['price'] = choice_context['millions'] * 10 + choice_context['thousands']
     return redirect('chokin')
 
 
 def select_box(request, id):
-    # print(f'chokin views.py select_box: called')
+    """ boxes.htmlで貯金箱が選ばれるとコールされる
+    """
+    # 一旦全ての貯金箱をNORMALに設定し、その後貯金箱選択肢のチェックを行う
+    # その後選ばれた貯金箱をHIGHLIGHTにする
     choice_context['box1'] = NORMAL_CLASS
     choice_context['box2'] = NORMAL_CLASS
     choice_context['box3'] = NORMAL_CLASS
@@ -102,6 +123,8 @@ def select_box(request, id):
     if id == 2: choice_context['box2'] = HIGHLIGHT_CLASS
     if id == 3: choice_context['box3'] = HIGHLIGHT_CLASS
 
+    # 他の選択肢が選ばれていれば確定ボンタンをイネーブルする
+    # 他の選択肢 処理(proc)と価格指定
     if (HIGHLIGHT_CLASS in [choice_context['proc1'], choice_context['proc2']]) and (choice_context['millions'] > 0 or choice_context['thousands'] > 0):
         choice_context['chokinkakutei'] = NORMAL_BUTTON
 
@@ -109,7 +132,11 @@ def select_box(request, id):
 
 
 def select_proc(request, id):
-    # print(f'chokin views.py select_proc: called')
+    """ boxprocprice.htmlで処理が選ばれるとコールされる
+    """
+    # 一旦両方の処理(貯める、使う）をNORMALに設定し、その後選択肢のチェックを行う
+    # その後選ばれた処理をHIGHLIGHTにする
+
     choice_context['proc1'] = NORMAL_CLASS
     choice_context['proc2'] = NORMAL_CLASS
 
@@ -119,6 +146,8 @@ def select_proc(request, id):
     if id == 1: choice_context['proc1'] = HIGHLIGHT_CLASS
     if id == 2: choice_context['proc2'] = HIGHLIGHT_CLASS
 
+    # 他の選択肢が選ばれていれば確定ボンタンをイネーブルする
+    # 他の選択肢 貯金箱と価格指定
     if (HIGHLIGHT_CLASS in [choice_context['box1'], choice_context['box2'], choice_context['box3']]) and (
             choice_context['millions'] > 0 or choice_context['thousands'] > 0):
         choice_context['chokinkakutei'] = NORMAL_BUTTON
@@ -127,8 +156,10 @@ def select_proc(request, id):
 
 
 def chokin(request):
-    # print(f'=> chokin() called {request.POST.keys()}')
+    """ 実質的な初期画面
+    """
 
+    # モデルアクセス準備
     if box_objects['box1'] is None:
         box_objects['box1'] = Chokinbako.objects.get(chokinbako_name='box1')
         box_objects['box2'] = Chokinbako.objects.get(chokinbako_name='box2')
@@ -138,16 +169,21 @@ def chokin(request):
         choice_context['box3current'] = box_objects['box3'].chokinbako_value
 
     if choice_context['confirmed'] == 1:
-        clear_choices()
-        choice_context['confirmed'] = 0
-        choice_context['millions'] = 0
-        choice_context['thousands'] = 0
-        choice_context['price'] = 0
+        
+        clear_choices() # 貯金箱選択と処理選択をクリアする
+        choice_context['confirmed'] = 0 # ステータスをクリアする
+        choice_context['millions'] = 0  # 金額指定をクリアする
+        choice_context['thousands'] = 0 # 金額指定をクリアする
+        choice_context['price'] = 0 # 金額指定をクリアする
 
+    # 画面表示を３桁区切りにする
     choice_context['box1display'] = "{:,}".format(choice_context['box1current'])
     choice_context['box2display'] = "{:,}".format(choice_context['box2current'])
     choice_context['box3display'] = "{:,}".format(choice_context['box3current'])
-    choice_context['subpanel'] = 0
+
+
+    # choice_context['subpanel'] = 0
+
     return render(request, 'chokin/chokin.html', choice_context)
 
 
@@ -160,22 +196,16 @@ def clear_choices():
 
 
 def which_box_and_process():
-    # print(f'which_box_and_process() called {choice_context=}')
-    # TODO: 有効な組み合わせであるかチェックする。駄目ならやり直しを求める
+    """ 選択された貯金箱と処理を返す
+    """
     return [k for k, v in choice_context.items() if v == HIGHLIGHT_CLASS]
-    pass
 
-
-def which_process():
-    pass
 
 
 def resetchokin(request):
-
-    print(f'--> return2chokin called {request.POST=}')
+    """ 処金箱選択、処理選択、金額指定をクリアする。chokin.htmlの下右のリセットボタンに対応
+    """
     clear_choices()
-    choice_context['boxpanel'] = 0
-    choice_context['subpanel'] = 0
     choice_context['millions'] = 0
     choice_context['thousands'] = 0
     choice_context['price'] = 0
@@ -250,34 +280,30 @@ def check_set_priceafter(request):
 
     return "{:,}".format(afterprice)
 
+def set_curretn_details(boxcurrent, box, proc):
+    if proc == "+":
+        choice_context[boxcurrent] += choice_context['price'] * 1000
+    else:
+        choice_context[boxcurrent] -= choice_context['price'] * 1000
+    box_objects[box].chokinbako_value = choice_context[boxcurrent]
+    box_objects[box].save()
+
 
 def set_current():
     if choice_context['proc'] == 'proc1':
         if choice_context['box'] == 'box1':
-            choice_context['box1current'] += choice_context['price'] * 1000
-            box_objects['box1'].chokinbako_value = choice_context['box1current']
-            box_objects['box1'].save()
+            set_curretn_details('box1current', 'box1', "+")
         elif choice_context['box'] == 'box2':
-            choice_context['box2current'] += choice_context['price'] * 1000
-            box_objects['box2'].chokinbako_value = choice_context['box2current']
-            box_objects['box2'].save()
+            set_curretn_details('box2current', 'box2', "+")
         elif choice_context['box'] == 'box3':
-            choice_context['box3current'] += choice_context['price'] * 1000
-            box_objects['box3'].chokinbako_value = choice_context['box3current']
-            box_objects['box3'].save()
+            set_curretn_details('box3current', 'box3', "+")
     elif choice_context['proc'] == 'proc2':
         if choice_context['box'] == 'box1':
-            choice_context['box1current'] -= choice_context['price'] * 1000
-            box_objects['box1'].chokinbako_value = choice_context['box1current']
-            box_objects['box1'].save()
+            set_curretn_details('box1current', 'box1', "-")
         elif choice_context['box'] == 'box2':
-            choice_context['box2current'] -= choice_context['price'] * 1000
-            box_objects['box2'].chokinbako_value = choice_context['box2current']
-            box_objects['box2'].save()
+            set_curretn_details('box2current', 'box2', "-")
         elif choice_context['box'] == 'box3':
-            choice_context['box3current'] -= choice_context['price'] * 1000
-            box_objects['box3'].chokinbako_value = choice_context['box3current']
-            box_objects['box3'].save()
+            set_curretn_details('box3current', 'box3', "-")
 
 
 def access_to_db():
@@ -293,6 +319,7 @@ def confirm(request, thousands, millions):
 
     # access_to_db()
 
+    # 
     if thousands == 0 and millions == 0:
         choice_context['confirmed'] = 1
         set_current()
@@ -322,7 +349,7 @@ def confirm(request, thousands, millions):
 
         choice_context['box'] = result[0]
         choice_context['proc'] = result[1]
-        choice_context['subpanel'] = 1
+        # choice_context['subpanel'] = 1
 
         if choice_context['confirmed'] == 0:
             print(f"{choice_context['box']=} {choice_context['proc']=}")
