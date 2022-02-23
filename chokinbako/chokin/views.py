@@ -116,6 +116,7 @@ def select_box(request, id):
     choice_context['box2'] = NORMAL_CLASS
     choice_context['box3'] = NORMAL_CLASS
 
+    # 貯金箱数は3を前提
     if id < 1 or id > 3:
         print(f'chokin views.py select_box: invalid box choice {id=}')
 
@@ -169,20 +170,14 @@ def chokin(request):
         choice_context['box3current'] = box_objects['box3'].chokinbako_value
 
     if choice_context['confirmed'] == 1:
-        
+        # 上記、confirmedの推移、参照        
         clear_choices() # 貯金箱選択と処理選択をクリアする
         choice_context['confirmed'] = 0 # ステータスをクリアする
-        choice_context['millions'] = 0  # 金額指定をクリアする
-        choice_context['thousands'] = 0 # 金額指定をクリアする
-        choice_context['price'] = 0 # 金額指定をクリアする
 
     # 画面表示を３桁区切りにする
     choice_context['box1display'] = "{:,}".format(choice_context['box1current'])
     choice_context['box2display'] = "{:,}".format(choice_context['box2current'])
     choice_context['box3display'] = "{:,}".format(choice_context['box3current'])
-
-
-    # choice_context['subpanel'] = 0
 
     return render(request, 'chokin/chokin.html', choice_context)
 
@@ -193,6 +188,9 @@ def clear_choices():
     choice_context['box3'] = NORMAL_CLASS
     choice_context['proc1'] = NORMAL_CLASS
     choice_context['proc2'] = NORMAL_CLASS
+    choice_context['millions'] = 0  # 金額指定をクリアする
+    choice_context['thousands'] = 0 # 金額指定をクリアする
+    choice_context['price'] = 0 # 金額指定をクリアする
 
 
 def which_box_and_process():
@@ -206,15 +204,12 @@ def resetchokin(request):
     """ 処金箱選択、処理選択、金額指定をクリアする。chokin.htmlの下右のリセットボタンに対応
     """
     clear_choices()
-    choice_context['millions'] = 0
-    choice_context['thousands'] = 0
-    choice_context['price'] = 0
-
     choice_context['chokinkakutei'] = DISABLED_BUTTON
     return render(request, 'chokin/chokin.html', choice_context)
 
 
 def set_pricethistime():
+
     if choice_context['proc'] == 'proc1':
         sign = "+"
     elif choice_context['proc'] == 'proc2':
@@ -319,9 +314,13 @@ def confirm(request, thousands, millions):
 
     # access_to_db()
 
-    # 
+    # 最初のconfirm.htmlから呼ばれるとthousands == 0 and millions == 0
     if thousands == 0 and millions == 0:
         choice_context['confirmed'] = 1
+        # confirm.htmlの"今回"を算出する。選ばれた貯金箱以外は0になる
+        # 選ばれた貯金箱の"今回"は貯めるの場合"+"が付けられ、"使う"の場合"-"が付けられる
+        # set_current()で対象処金箱が特定され、かつ、符号が処理される
+        #   set_current_details()で
         set_current()
     else:
         choice_context['confirmed'] = 0
